@@ -1,13 +1,16 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { useEffect } from "react";
 
 export default function MainLayout(props: { children: React.ReactNode }){
 
-    const userData = localStorage.getItem('userData')
     const router = useRouter();
-    
-    if(!userData) router.push("/")
+
+    useEffect(() => {
+        const userData = localStorage.getItem('userData')
+        if(!userData) router.push("/")
+    }, [])
 
 
     return(

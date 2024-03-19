@@ -7,41 +7,71 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import NavBar from '@/components/NavBar';
 
 export default function MainPage() {
+    /**
+ * Hook de estado para manejar la lista de inscripciones.
+ */
     const [inscriptions, setInscriptions] = useState([] as any);
 
+    const [userId, setUserId] = useState(-1);
+
+    /**
+     * Custom hook para acceder a las funciones relacionadas con las inscripciones.
+     */
     const { getInscriptions, createInscription, deleteInscription } = useInscriptions();
 
-    const userId = JSON.parse(localStorage.getItem("userData") || "{}" ).id;
-
+    /**
+     * Carga las inscripciones al montar el componente.
+     */
     useEffect(() => {
+        const id = JSON.parse(localStorage.getItem("userData") || "{}").id;
+        setUserId(id);
         loadData();
     }, [])
 
-    const loadData = ()=> {
+    /**
+     * Carga las inscripciones utilizando la función getInscriptions y actualiza el estado con los datos obtenidos.
+     */
+    const loadData = () => {
         getInscriptions().then(res => {
             console.log(res.data.data);
-
             setInscriptions(res.data.data)
         })
     }
 
+    /**
+     * Maneja la acción de inscripción a un evento específico.
+     * @param eventId El ID del evento al que se desea inscribir.
+     */
     const handleInscription = (eventId: any) => {
         createInscription(eventId, userId).then(res => loadData())
     }
 
+    /**
+     * Maneja la acción de cancelar la inscripción a un evento específico.
+     * @param eventId El ID del evento al que se desea cancelar la inscripción.
+     */
     const handleDeleteInscription = (eventId: any) => {
         deleteInscription(eventId, userId).then(res => loadData())
     }
 
+    /**
+     * Valida el estado de la inscripción del usuario actual para un evento específico.
+     * @param assistants La lista de asistentes al evento.
+     * @returns Un elemento Chip que indica si el usuario ya está inscrito o si la inscripción está disponible.
+     */
     const validateStatus = (assistants: any[]) => {
         const user = assistants.find((assistant: any) => assistant.userId === userId);
-
         return (user ? <Chip label="Ya inscrito" color='error' /> : <Chip label="Disponible" color='success' />)
     }
 
+    /**
+     * Valida y renderiza un botón de inscripción o anulación para un evento específico dependiendo del estado de la inscripción del usuario actual.
+     * @param inscription La información de la inscripción.
+     * @param assistants La lista de asistentes al evento.
+     * @returns Un botón de inscripción o anulación dependiendo del estado de la inscripción del usuario actual.
+     */
     const validateButton = (inscription: any, assistants: any[]) => {
         const user = assistants.find((assistant: any) => assistant.userId === userId);
-
         return (user ? <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => handleDeleteInscription(inscription.event.id)}> Anular</Button>
             : <Button variant="outlined" color="success" startIcon={<CheckIcon />} onClick={() => handleInscription(inscription.event.id)}> Inscribir</Button>
         )

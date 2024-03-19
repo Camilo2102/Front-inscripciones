@@ -14,15 +14,30 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import theme from '@/theme';
-import {useAssistants, useCredentials} from '@/services/mainService';
+import { useAssistants, useCredentials } from '@/services/mainService';
 import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
 
-  const { login } = useCredentials();
-  const { createAssistant } = useAssistants();
+  /**
+  * Hook useRouter proporciona el acceso al router de Next.js.
+  */
   const router = useRouter();
 
+  /**
+   * Hook personalizado que proporciona la función de inicio de sesión.
+   */
+  const { login } = useCredentials();
+
+  /**
+   * Hook personalizado que proporciona la función para crear un nuevo asistente.
+   */
+  const { createAssistant } = useAssistants();
+
+  /**
+   * Maneja el envío del formulario de inicio de sesión.
+   * @param event El evento de envío del formulario.
+   */
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -33,16 +48,18 @@ export default function SignIn() {
       localStorage.setItem('userData', JSON.stringify(res.data.data));
       validateAssistant(res);
       router.push("/main")
-      
     })
   };
 
+  /**
+   * Valida y crea un nuevo asistente si el usuario recién iniciado sesión no tiene uno asociado.
+   * @param res La respuesta de la solicitud de inicio de sesión.
+   */
   const validateAssistant = (res: any) => {
     try {
       createAssistant(res.data.data.id);
     } catch (error) {
       console.log("already created");
-      
     }
   }
 
