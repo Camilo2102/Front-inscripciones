@@ -1,7 +1,7 @@
 import { Credentials } from "@/types"
 import axios from "axios"
 
-const loginUrl = "http://localhost:8090/"
+const loginUrl = "https://microservice-production-b78e.up.railway.app/"
 const inscriptionsUrl = "https://inscripciones-cts9.onrender.com/inscription/"
 const assistantUrl = "https://inscripciones-cts9.onrender.com/assistant/"
 
